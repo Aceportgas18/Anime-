@@ -1,0 +1,29 @@
+if (req.method === "DELETE") {
+      const { anime_id } = req.body;
+
+      if (!anime_id) {
+        console.error("Bad request: Missing anime_id for deletion");
+        return res.status(400).json({ error: "anime_id is required for deletion" });
+      }
+
+      const { data, error } = await supabase
+        .from("watchlist")
+        .delete()
+        .eq("user_id", userId)
+        .eq("anime_id", anime_id);
+
+      if (error) {
+        console.error("Error deleting watchlist entry:", error);
+        return res.status(500).json({ error: error.message });
+      }
+
+      return res.status(200).json({ message: "Watchlist entry deleted", data });
+    }
+
+    res.setHeader("Allow", ["GET", "POST", "DELETE"]);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  } catch (err) {
+    console.error("Unexpected server error:", err);
+    return res.status(500).json({ error: "Unexpected server error" });
+  }
+}

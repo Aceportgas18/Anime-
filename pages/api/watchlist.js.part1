@@ -1,0 +1,48 @@
+import { supabase } from "../../lib/supabaseClient";
+import { getToken } from "next-auth/jwt";
+
+const secret = process.env.NEXTAUTH_SECRET;
+
+export default async function handler(req, res) {
+  try {
+    const token = await getToken({ req, secret });
+    console.log("Token extracted:", token);
+
+    if (!token) {
+      console.error("Unauthorized: No valid token found");
+      return res.status(401).json({ error: "Unauthorized: No valid token found" });
+    }
+
+    const userId = token.id;
+    console.log("User ID from token:", userId, "Type:", typeof userId);
+
+    if (!userId) {
+      console.error("Unauthorized: User ID not found in token");
+      return res.status(401).json({ error: "Unauthorized: User ID not found" });
+    }
+
+    // Check if userId is a valid UUID string (basic check)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(userId)) {
+      console.warn("Warning: userId does not appear to be a valid UUID:", userId);
+    }
+
+      if (req.method === "GET") {
+        let data, error;
+        try {
+          ({ data, error } = await supabase
+            .from("watchlist")
+            .select("*")
+            .eq("user_id", userId));
+        } catch (fetchError) {
+          console.error("Exception during Supabase fetch:", fetchError);
+          return res.status(500).json({ error: "Exception during Supabase fetch", details: fetchError.message || fetchError });
+        }
+
+        if (error) {
+          console.error("Error fetching watchlist:", error);
+          return res.status(500).json({ error: error.message });
+        }
+
+        return res.status(200).json(data);
+      }
