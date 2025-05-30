@@ -1,0 +1,99 @@
+.header {
+  background-color: #111;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.headerContent {
+  max-width: 1200px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: monospace;
+  font-size: 1.8rem;
+  color: #00ffff;
+  text-shadow: 0 0 5px #00ffff;
+  margin: 0;
+}
+
+.title a {
+  color: #00ffff;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navLink {
+  color: #00ffff;
+  font-family: monospace;
+  font-size: 1rem;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.navLink:hover,
+.navLink:focus {
+  background-color: rgba(0, 255, 255, 0.2);
+  outline: none;
+}
+
+.greeting {
+  color: #00ffff;
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin-left: 1rem;
+}
+
+.logoutButton {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: monospace;
+  transition: background-color 0.3s ease;
+  margin-left: 1rem;
+}
+
+.logoutButton:hover,
+.logoutButton:focus {
+  background-color: #cc3a3a;
+  outline: none;
+}
+
+.main {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  min-height: calc(100vh - 140px);
+}
+
+.footer {
+  text-align: center;
+  padding: 1rem 0;
+  background-color: #111;
+  color: #00ffff;
+  font-family: monospace;
+  font-size: 0.9rem;
+  box-shadow: 0 -2px 8px rgba(0, 255, 255, 0.3);
+  margin-top: 2rem;
+}
