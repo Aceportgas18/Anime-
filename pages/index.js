@@ -137,25 +137,87 @@ const renderAnimeRow = (title, animeList) => (
               alignItems: "center",
             }}
           >
-           <div
-  style={{
-    width: "200px",       // Adjust width as needed
-    height: "60px",       // Adjust height as needed
-    overflow: "hidden",   // Prevent overflow
-    display: "flex",
-    alignItems: "center", // Vertically center the image
-  }}
->
-  <img
-    src="/lgo1.png"
-    alt="Logo"
-    style={{
-      width: "190px",
-      height: "70px%",
-      objectFit: "contain", // or "cover" if you want it fully filled
-    }}
-  />
-</div>
+            <div> <h1
+              style={{
+                fontSize: "2rem",
+                textShadow: "0 0 5px #00ffff",
+                marginBottom: "10px",
+              }}
+            >
+              ANIMEFLOW
+            </h1> </div>
+
+            <nav
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "12px",
+                alignItems: "center",
+              }}
+            >
+              {["top", "upcoming", "popular"].map((cat) => (
+                <motion.button
+                  key={cat}
+                  onClick={() => setCategory(cat)}
+                  disabled={category === cat}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{
+                    padding: "10px 15px",
+                    backgroundColor: category === cat ? "#00ffff" : "#222",
+                    color: category === cat ? "#111" : "#fff",
+                    border: "1px solid #00ffff",
+                    borderRadius: "6px",
+                    fontSize: "1rem",
+                    fontFamily: "monospace",
+                    cursor: "pointer",
+                    transition: "0.3s",
+                  }}
+                >
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </motion.button>
+              ))}
+
+              {session ? (
+                <>
+                  <span style={{ marginLeft: "1rem", fontSize: "0.95rem" }}>
+                    Hello, {session.user.email}
+                  </span>
+                  <button
+                    onClick={() => signOut()}
+                    style={{
+                      marginLeft: "1rem",
+                      backgroundColor: "#ff4d4d",
+                      color: "#fff",
+                      border: "none",
+                      padding: "8px 12px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      fontFamily: "monospace",
+                    }}
+                  >
+                    Logout
+                  </button>
+                  <Link href="/watchlist" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
+                    Watchlist
+                  </Link>
+                  <Link href="/review" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
+                    Create Review Poster
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
+                    Login
+                  </Link>
+                  <Link href="/register" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
+                    Register
+                  </Link>
+                </>
+              )}
+            </nav>
+          </div>
+        </header>
 
             <div className={styles.searchContainer} ref={searchRef} style={{ marginTop: '1rem', width: '300px' }}>
               <input
