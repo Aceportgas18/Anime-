@@ -135,15 +135,26 @@ export default function Home() {
               alignItems: "center",
             }}
           >
-            <div> <h1
-              style={{
-                fontSize: "2rem",
-                textShadow: "0 0 5px #00ffff",
-                marginBottom: "10px",
-              }}
-            >
-              ANIMEFLOW
-            </h1> </div>
+           <div
+  style={{
+    width: "200px",       // Adjust width as needed
+    height: "60px",       // Adjust height as needed
+    overflow: "hidden",   // Prevent overflow
+    display: "flex",
+    alignItems: "center", // Vertically center the image
+  }}
+>
+  <img
+    src="/lgo1.png"
+    alt="Logo"
+    style={{
+      width: "190px",
+      height: "70px%",
+      objectFit: "contain", // or "cover" if you want it fully filled
+    }}
+  />
+</div>
+
 
             <nav
               style={{

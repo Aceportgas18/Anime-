@@ -3,7 +3,8 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/api/watchlist": "pages/api/watchlist.js",
+  "/anime/[id]": "pages/anime/[id].js",
   "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
-  "/watchlist": "pages/watchlist.js"
+  "/login": "pages/login.js",
+  "/register": "pages/register.js"
 }
