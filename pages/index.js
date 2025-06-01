@@ -28,6 +28,11 @@ export default function Home() {
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
 
+  // Refs for anime rows
+  const topRowRef = useRef(null);
+  const upcomingRowRef = useRef(null);
+  const popularRowRef = useRef(null);
+
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setSearchResults([]);
@@ -85,7 +90,7 @@ export default function Home() {
     };
   }, []);
 
-  if (topError || upcomingError || popularError) return <div>Failed to load anime data</div>;
+if (topError || upcomingError || popularError) return <div>Failed to load anime data</div>;
 if (!topData || !upcomingData || !popularData) {
     // Show loading video when data is being fetched
     return (
@@ -104,30 +109,57 @@ if (!topData || !upcomingData || !popularData) {
 
   if (status === "loading") return <div>Loading session...</div>;
 
-const renderAnimeRow = (title, animeList) => (
-  <section className={styles.animeRowSection}>
-    <h2 className={styles.categoryTitle}>{title}</h2>
-    <div className={styles.animeRow}>
-      {Array.isArray(animeList) && animeList.length > 0 ? (
-        animeList.map((anime) => (
-          <Link key={anime.mal_id} href={`/anime/${anime.mal_id}`} className={styles.animeCard}>
-            <img
-              src={anime.images.jpg.image_url}
-              alt={anime.title}
-              className={styles.animeCardImage}
-            />
-            <div className={styles.animeCardInfo}>
-              <h3 className={styles.animeCardTitle}>{anime.title}</h3>
-              <p className={styles.animeCardScore}>Score: {anime.score || "N/A"}</p>
-            </div>
-          </Link>
-        ))
-      ) : (
-        <p>No anime data available.</p>
-      )}
-    </div>
-  </section>
-);
+  const scrollRow = (rowRef, direction) => {
+    if (rowRef.current) {
+      const scrollAmount = 300;
+      if (direction === "left") {
+        rowRef.current.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+      } else {
+        rowRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      }
+    }
+  };
+
+  const renderAnimeRow = (title, animeList, rowRef) => (
+    <section className={styles.animeRowSection}>
+      <h2 className={styles.categoryTitle}>{title}</h2>
+      <div className={styles.scrollButtonsContainer}>
+        <button
+          className={styles.scrollButton}
+          onClick={() => scrollRow(rowRef, "left")}
+          aria-label={`Scroll ${title} left`}
+        >
+          &#8249;
+        </button>
+        <div className={styles.animeRow} ref={rowRef}>
+          {Array.isArray(animeList) && animeList.length > 0 ? (
+            animeList.map((anime) => (
+              <Link key={anime.mal_id} href={`/anime/${anime.mal_id}`} className={styles.animeCard}>
+                <img
+                  src={anime.images.jpg.image_url}
+                  alt={anime.title}
+                  className={styles.animeCardImage}
+                />
+                <div className={styles.animeCardInfo}>
+                  <h3 className={styles.animeCardTitle}>{anime.title}</h3>
+                  <p className={styles.animeCardScore}>Score: {anime.score || "N/A"}</p>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <p>No anime data available.</p>
+          )}
+        </div>
+        <button
+          className={styles.scrollButton}
+          onClick={() => scrollRow(rowRef, "right")}
+          aria-label={`Scroll ${title} right`}
+        >
+          &#8250;
+        </button>
+      </div>
+    </section>
+  );
 
   return (
     <>
@@ -138,8 +170,6 @@ const renderAnimeRow = (title, animeList) => (
           <div className={styles.headerContent}>
             <nav className={styles.nav}>
               <img src="/logo.png" alt="Company Logo" style={{ height: "40px", marginRight: "20px" }} />
-              {/* Optionally keep category buttons or remove */}
-              {/* Removed ANIMEFLOW text from here */}
             </nav>
 
               <input
@@ -170,9 +200,9 @@ const renderAnimeRow = (title, animeList) => (
         </header>
 
         <main className={styles.main}>
-          {renderAnimeRow(categories[0].label, topData.data)}
-          {renderAnimeRow(categories[1].label, Array.from(new Map(upcomingData.data.map(item => [item.mal_id, item])).values()))}
-          {renderAnimeRow(categories[2].label, popularData.data)}
+          {renderAnimeRow(categories[0].label, topData.data, topRowRef)}
+          {renderAnimeRow(categories[1].label, Array.from(new Map(upcomingData.data.map(item => [item.mal_id, item])).values()), upcomingRowRef)}
+          {renderAnimeRow(categories[2].label, popularData.data, popularRowRef)}
         </main>
       </div>
     </>
