@@ -15,9 +15,26 @@ export default function Layout({ children }) {
       </Head>
       <header className={styles.header}>
         <div className={styles.headerContent}>
-          <h1 className={styles.title}>
-            <Link href="/">ANIMEFLOW</Link>
-          </h1>
+          <div
+  style={{
+    width: "200px",       // Adjust width as needed
+    height: "60px",       // Adjust height as needed
+    overflow: "hidden",   // Prevent overflow
+    display: "flex",
+    alignItems: "center", // Vertically center the image
+  }}
+>
+  <img
+    src="/logo.png"
+    alt="Logo"
+    style={{
+      width: "190px",
+      height: "70px%",
+      objectFit: "contain", // or "cover" if you want it fully filled
+    }}
+  />
+</div>
+
           <nav className={styles.nav}>
             <Link href="/" className={styles.navLink}>Home</Link>
             <Link href="/watchlist" className={styles.navLink}>Watchlist</Link>

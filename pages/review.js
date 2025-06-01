@@ -400,7 +400,7 @@ const ReviewPoster = ({ animeImage, userImage, rating, username, companyLogo }) 
       <div style={{ marginTop: "10px", fontSize: "1.5rem" }}>
         <strong>Rating: </strong>{renderStars(rating)}
       </div>
-      <img src={companyLogo} alt="Company Logo" style={{ width: "50px", marginTop: "10px" }} />
+      <img src={companyLogo} alt="Company Logo" style={{ width: "120px", marginTop: "10px" }} />
     </div>
   );
 };

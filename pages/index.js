@@ -21,6 +21,8 @@ export default function Home() {
   const { data: upcomingData, error: upcomingError } = useSWR(categories[1].url, fetcher);
   const { data: popularData, error: popularError } = useSWR(categories[2].url, fetcher);
 
+  const [category, setCategory] = useState("top");
+
   const [searchTerm, setSearchTerm] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -32,25 +34,42 @@ export default function Home() {
       setShowDropdown(false);
       return;
     }
-    const delayDebounceFn = setTimeout(() => {
-      fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(searchTerm)}&limit=5`)
-        .then((res) => res.json())
-        .then((result) => {
-          if (result && result.data) {
-            setSearchResults(result.data);
-            setShowDropdown(true);
-          } else {
-            setSearchResults([]);
-            setShowDropdown(false);
-          }
-        })
-        .catch(() => {
-          setSearchResults([]);
-          setShowDropdown(false);
-        });
-    }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    const cache = Home.searchCache || (Home.searchCache = {});
+
+    const delayDebounceFn = setTimeout(() => {
+      if (cache[searchTerm]) {
+        setSearchResults(cache[searchTerm]);
+        setShowDropdown(true);
+      } else {
+        fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(searchTerm)}&limit=5`, { signal })
+          .then((res) => res.json())
+          .then((result) => {
+            if (result && result.data) {
+              cache[searchTerm] = result.data;
+              setSearchResults(result.data);
+              setShowDropdown(true);
+            } else {
+              setSearchResults([]);
+              setShowDropdown(false);
+            }
+          })
+          .catch((error) => {
+            if (error.name !== 'AbortError') {
+              setSearchResults([]);
+              setShowDropdown(false);
+            }
+          });
+      }
+    }, 500);
+
+    return () => {
+      clearTimeout(delayDebounceFn);
+      controller.abort();
+    };
   }, [searchTerm]);
 
   // Close dropdown when clicking outside
@@ -112,114 +131,17 @@ const renderAnimeRow = (title, animeList) => (
 
   return (
     <>
-      <div className={styles.backgroundVideoContainer}>
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className={styles.backgroundVideo}
-          src="/video1.mp4"
-        />
+      <div className={styles.backgroundVideoContainer} style={{background: 'linear-gradient(135deg, #0f2027, #203a43, #2c5364)', filter: 'blur(4px) brightness(0.6)'}}>
       </div>
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
             <nav className={styles.nav}>
+              <img src="/logo.png" alt="Company Logo" style={{ height: "40px", marginRight: "20px" }} />
               {/* Optionally keep category buttons or remove */}
+              {/* Removed ANIMEFLOW text from here */}
             </nav>
 
-                 <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <div> <h1
-              style={{
-                fontSize: "2rem",
-                textShadow: "0 0 5px #00ffff",
-                marginBottom: "10px",
-              }}
-            >
-              ANIMEFLOW
-            </h1> </div>
-
-            <nav
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-                gap: "12px",
-                alignItems: "center",
-              }}
-            >
-              {["top", "upcoming", "popular"].map((cat) => (
-                <motion.button
-                  key={cat}
-                  onClick={() => setCategory(cat)}
-                  disabled={category === cat}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  style={{
-                    padding: "10px 15px",
-                    backgroundColor: category === cat ? "#00ffff" : "#222",
-                    color: category === cat ? "#111" : "#fff",
-                    border: "1px solid #00ffff",
-                    borderRadius: "6px",
-                    fontSize: "1rem",
-                    fontFamily: "monospace",
-                    cursor: "pointer",
-                    transition: "0.3s",
-                  }}
-                >
-                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                </motion.button>
-              ))}
-
-              {session ? (
-                <>
-                  <span style={{ marginLeft: "1rem", fontSize: "0.95rem" }}>
-                    Hello, {session.user.email}
-                  </span>
-                  <button
-                    onClick={() => signOut()}
-                    style={{
-                      marginLeft: "1rem",
-                      backgroundColor: "#ff4d4d",
-                      color: "#fff",
-                      border: "none",
-                      padding: "8px 12px",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      fontFamily: "monospace",
-                    }}
-                  >
-                    Logout
-                  </button>
-                  <Link href="/watchlist" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
-                    Watchlist
-                  </Link>
-                  <Link href="/review" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
-                    Create Review Poster
-                  </Link>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
-                    Login
-                  </Link>
-                  <Link href="/register" style={{ marginLeft: "1rem", color: "#00ffff", textDecoration: "underline" }}>
-                    Register
-                  </Link>
-                </>
-              )}
-            </nav>
-          </div>
-        </header>
-
-            <div className={styles.searchContainer} ref={searchRef} style={{ marginTop: '1rem', width: '300px' }}>
               <input
                 type="text"
                 placeholder="Search anime..."
@@ -244,7 +166,6 @@ const renderAnimeRow = (title, animeList) => (
                   ))}
                 </div>
               )}
-            </div>
           </div>
         </header>
 
@@ -257,3 +178,12 @@ const renderAnimeRow = (title, animeList) => (
     </>
   );
 }
+
+
+
+
+
+
+
+
+
