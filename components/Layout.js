@@ -28,9 +28,9 @@ export default function Layout({ children }) {
     src="/logo.png"
     alt="Logo"
     style={{
-      width: "190px",
-      height: "70px",
-      objectFit: "contain", // or "cover" if you want it fully filled
+      width: "150px",
+      height: "50px",
+      objectFit: "contain",
     }}
   />
 </div>

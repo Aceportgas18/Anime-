@@ -29,6 +29,7 @@ export default function Watchlist() {
   }, [status, session, update]);
 
   useEffect(() => {
+    let isMounted = true;
     if (status === "authenticated" && session?.accessToken) {
       fetch("/api/watchlist", {
         headers: {
@@ -37,6 +38,7 @@ export default function Watchlist() {
       })
         .then((res) => res.json())
         .then((data) => {
+          if (!isMounted) return;
           if (Array.isArray(data)) {
             setWatchlist(data);
           } else if (data && data.length === undefined) {
@@ -47,13 +49,24 @@ export default function Watchlist() {
           setLoading(false);
         })
         .catch(() => {
+          if (!isMounted) return;
           setError("Failed to load watchlist");
           setLoading(false);
         });
-    } else {
+    } else if (status === "unauthenticated") {
+      setWatchlist([]);
       setLoading(false);
     }
+    return () => {
+      isMounted = false;
+    };
   }, [status, session]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("watchlist", JSON.stringify(watchlist));
+    }
+  }, [watchlist]);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {

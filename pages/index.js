@@ -5,7 +5,29 @@ import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import styles from '../styles/Home.module.css';
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
+const fetcher = async (url, retries = 3, delay = 1000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        if (res.status === 429) {
+          // Rate limited, wait and retry
+          await new Promise((r) => setTimeout(r, delay));
+          delay *= 2; // Exponential backoff
+          continue;
+        } else {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+      }
+      return await res.json();
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      await new Promise((r) => setTimeout(r, delay));
+      delay *= 2;
+    }
+  }
+  throw new Error("Failed to fetch after retries");
+};
 
 const categories = [
   { key: "top", label: "Top Anime", url: "https://api.jikan.moe/v4/top/anime" },
@@ -167,9 +189,9 @@ if (!isTopDataValid || !isUpcomingDataValid || !isPopularDataValid) {
       <div className={styles.container}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            <nav className={styles.nav}>
-              <img src="/logo.png" alt="Company Logo" style={{ height: "40px", marginRight: "20px" }} />
-            </nav>
+          <nav className={styles.nav}>
+            {/* Removed logo from search bar container as per user request */}
+          </nav>
 
               <input
                 type="text"
