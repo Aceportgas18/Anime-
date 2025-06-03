@@ -29,7 +29,7 @@ export default function Layout({ children }) {
     alt="Logo"
     style={{
       width: "190px",
-      height: "70px%",
+      height: "70px",
       objectFit: "contain", // or "cover" if you want it fully filled
     }}
   />

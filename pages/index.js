@@ -91,21 +91,20 @@ export default function Home() {
   }, []);
 
 if (topError || upcomingError || popularError) return <div>Failed to load anime data</div>;
-if (!topData || !upcomingData || !popularData) {
-    // Show loading video when data is being fetched
-    return (
-      <div className={styles.loadingScreen}>
-        <video
-          src="/loading.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className={styles.loadingVideo}
-        />
-      </div>
-    );
-  }
+
+// Defensive check for data presence and structure
+const isTopDataValid = topData && Array.isArray(topData.data);
+const isUpcomingDataValid = upcomingData && Array.isArray(upcomingData.data);
+const isPopularDataValid = popularData && Array.isArray(popularData.data);
+
+if (!isTopDataValid || !isUpcomingDataValid || !isPopularDataValid) {
+  // Show fallback UI or error message
+  return (
+    <div className={styles.loadingScreen}>
+      <p>Loading or no data available due to API rate limiting.</p>
+    </div>
+  );
+}
 
   if (status === "loading") return <div>Loading session...</div>;
 
@@ -200,9 +199,9 @@ if (!topData || !upcomingData || !popularData) {
         </header>
 
         <main className={styles.main}>
-          {renderAnimeRow(categories[0].label, topData.data, topRowRef)}
-          {renderAnimeRow(categories[1].label, Array.from(new Map(upcomingData.data.map(item => [item.mal_id, item])).values()), upcomingRowRef)}
-          {renderAnimeRow(categories[2].label, popularData.data, popularRowRef)}
+          {renderAnimeRow(categories[0].label, isTopDataValid ? topData.data : [], topRowRef)}
+          {renderAnimeRow(categories[1].label, isUpcomingDataValid ? Array.from(new Map(upcomingData.data.map(item => [item.mal_id, item])).values()) : [], upcomingRowRef)}
+          {renderAnimeRow(categories[2].label, isPopularDataValid ? popularData.data : [], popularRowRef)}
         </main>
       </div>
     </>
