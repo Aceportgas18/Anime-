@@ -1,6 +1,6 @@
--- Create function to auto-set user_id from auth.uid() on insert
+-- Function to set user_id from auth.uid() on insert
 CREATE OR REPLACE FUNCTION set_user_id_from_auth()
-RETURNS trigger AS $BODY$
+RETURNS TRIGGER AS $BODY$
 BEGIN
   IF NEW.user_id IS NULL THEN
     NEW.user_id := auth.uid();
@@ -9,7 +9,7 @@ BEGIN
 END;
 $BODY$ LANGUAGE plpgsql SECURITY DEFINER;
 
--- Attach trigger to watchlist table
+-- Trigger to call the function before insert on watchlist table
 DROP TRIGGER IF EXISTS set_user_id_trigger ON public.watchlist;
 
 CREATE TRIGGER set_user_id_trigger

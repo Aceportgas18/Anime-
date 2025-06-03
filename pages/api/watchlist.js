@@ -80,6 +80,7 @@ export default async function handler(req, res) {
 
           return res.status(200).json(data);
         } else {
+          // Insert without user_id, rely on DB trigger to set user_id from auth.uid()
           const { data, error } = await supabase
             .from("watchlist")
             .insert([{ anime_id, status, comment, image_url }])
