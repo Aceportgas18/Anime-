@@ -82,7 +82,7 @@ export default async function handler(req, res) {
         } else {
           const { data, error } = await supabase
             .from("watchlist")
-            .insert([{ user_id: userId, anime_id, status, comment, image_url }])
+            .insert([{ anime_id, status, comment, image_url }])
             .select();
 
           if (error) {
