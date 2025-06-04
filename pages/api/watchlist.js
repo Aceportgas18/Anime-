@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
     if (req.method === "GET") {
       const { data, error } = await supabase
-        .from("watchlist")
+        .from("watchlist_1")
         .select("*")
         .eq("user_id", userId);
 
@@ -55,7 +55,7 @@ export default async function handler(req, res) {
         }
 
         const { data: existing, error: fetchError } = await supabase
-          .from("watchlist")
+          .from("watchlist_1")
           .select("*")
           .eq("user_id", userId)
           .eq("anime_id", anime_id)
@@ -108,7 +108,7 @@ export default async function handler(req, res) {
       }
 
       const { data, error } = await supabase
-        .from("watchlist")
+        .from("watchlist_1")
         .delete()
         .eq("user_id", userId)
         .eq("anime_id", anime_id);
