@@ -68,8 +68,8 @@ export default async function handler(req, res) {
 
         if (existing) {
           const { data, error } = await supabase
-            .from("watchlist")
-            .update({ status, comment, image_url, updated_at: new Date().toISOString() })
+            .from("watchlist_1")
+            .update({ status, comment, image_url, updated_at: new Date().toISOString(), user_id: userId })
             .eq("id", existing.id)
             .select();
 
@@ -80,10 +80,10 @@ export default async function handler(req, res) {
 
           return res.status(200).json(data);
         } else {
-          // Insert without user_id, rely on DB trigger to set user_id from auth.uid()
+          // Insert with explicit user_id to bypass trigger
           const { data, error } = await supabase
-            .from("watchlist")
-            .insert([{ anime_id, status, comment, image_url }])
+            .from("watchlist_1")
+            .insert([{ anime_id, status, comment, image_url, user_id: userId }])
             .select();
 
           if (error) {
