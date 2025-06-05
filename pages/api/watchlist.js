@@ -83,7 +83,7 @@ export default async function handler(req, res) {
           // Insert with explicit user_id to bypass trigger
           const { data, error } = await supabase
             .from("watchlist_1")
-            .insert([{ anime_id, status, comment, image_url, user_id: userId }])
+            .insert([{ anime_id, status, comment, image_url }])
             .select();
 
           if (error) {
