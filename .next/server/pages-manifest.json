@@ -4,5 +4,6 @@
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
   "/watchlist": "pages/watchlist.js",
+  "/api/auth/[...nextauth]": "pages/api/auth/[...nextauth].js",
   "/review": "pages/review.js"
 }
