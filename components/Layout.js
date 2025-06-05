@@ -17,8 +17,8 @@ export default function Layout({ children }) {
         <div className={styles.headerContent}>
           <div
   style={{
-    width: "200px",       // Adjust width as needed
-    height: "60px",       // Adjust height as needed
+    width: "300px",       // Increased width for better visibility
+    height: "90px",       // Increased height for better visibility
     overflow: "hidden",   // Prevent overflow
     display: "flex",
     alignItems: "center", // Vertically center the image
@@ -28,8 +28,8 @@ export default function Layout({ children }) {
     src="/logo.png"
     alt="Logo"
     style={{
-      width: "150px",
-      height: "50px",
+      width: "260px",     // Increased width for zoom effect
+      height: "800px",     // Increased height for zoom effect
       objectFit: "contain",
     }}
   />
