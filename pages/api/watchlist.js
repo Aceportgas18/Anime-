@@ -81,10 +81,14 @@ export default async function handler(req, res) {
           return res.status(200).json(data);
         } else {
           // Insert with explicit user_id to bypass trigger
+          console.log("Inserting new watchlist entry:", { anime_id, status, comment, image_url });
           const { data, error } = await supabase
             .from("watchlist_1")
             .insert([{ anime_id, status, comment, image_url }])
             .select();
+
+          console.log("Insert result data:", data);
+          console.log("Insert result error:", error);
 
           if (error) {
             console.error("Error inserting watchlist entry:", error);
